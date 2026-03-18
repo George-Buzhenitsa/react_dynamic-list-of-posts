@@ -30,16 +30,13 @@ export const PostDetails: React.FC<Props> = ({ selectedPost }) => {
   };
 
   const deleteComment = async (commentId: number) => {
-    setStatus(Status.Loading);
+    setComments((currentComments: Comment[]) => {
+      return [...currentComments].filter(
+        (comment: Comment) => comment.id !== commentId,
+      );
+    });
     try {
       await httpService.deleteComment(commentId);
-
-      setComments((currentComments: Comment[]) => {
-        return [...currentComments].filter(
-          (comment: Comment) => comment.id !== commentId,
-        );
-      });
-      setStatus(Status.Success);
     } catch {
       setStatus(Status.Error);
     }

@@ -24,16 +24,22 @@ export const NewCommentForm: React.FC<Props> = ({
   );
 
   const handleNameInput = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setStatus(Status.IDLE);
+    setFieldError(FieldsErrorStatus.IDLE);
     setName(event.target.value);
   };
 
   const handleEmailInput = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setStatus(Status.IDLE);
+    setFieldError(FieldsErrorStatus.IDLE);
     setEmail(event.target.value);
   };
 
   const handleCommentInput = (
     event: React.ChangeEvent<HTMLTextAreaElement>,
   ) => {
+    setStatus(Status.IDLE);
+    setFieldError(FieldsErrorStatus.IDLE);
     setCommentText(event.target.value);
   };
 
@@ -94,6 +100,7 @@ export const NewCommentForm: React.FC<Props> = ({
 
   const clear = () => {
     setStatus(Status.IDLE);
+    setFieldError(FieldsErrorStatus.IDLE);
     setName('');
     setEmail('');
     setCommentText('');
