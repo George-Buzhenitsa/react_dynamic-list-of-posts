@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { FieldsErrorStatus, Status } from '../types/Status';
+import { Status } from '../types/Status';
 import classNames from 'classnames';
 import { Comment, CommentData } from '../types/Comment';
 import * as httpService from '../api/HttpClient';
@@ -19,28 +19,47 @@ export const NewCommentForm: React.FC<Props> = ({
   const [commentText, setCommentText] = useState('');
 
   const [status, setStatus] = useState<Status>(Status.IDLE);
-  const [fieldError, setFieldError] = useState<FieldsErrorStatus>(
-    FieldsErrorStatus.IDLE,
-  );
+
+  const [nameError, setNameError] = useState(false);
+  const [emailError, setEmaiError] = useState(false);
+  const [commentError, setCommentError] = useState(false);
 
   const handleNameInput = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setStatus(Status.IDLE);
-    setFieldError(FieldsErrorStatus.IDLE);
-    setName(event.target.value);
+    const nameValue = event.target.value;
+
+    if (name !== nameValue) {
+      setNameError(false);
+    }
+
+    setName(nameValue);
   };
 
   const handleEmailInput = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setStatus(Status.IDLE);
-    setFieldError(FieldsErrorStatus.IDLE);
-    setEmail(event.target.value);
+    const emailValue = event.target.value;
+
+    if (email !== emailValue) {
+      setEmaiError(false);
+    }
+
+    setEmail(emailValue);
   };
 
   const handleCommentInput = (
     event: React.ChangeEvent<HTMLTextAreaElement>,
   ) => {
-    setStatus(Status.IDLE);
-    setFieldError(FieldsErrorStatus.IDLE);
-    setCommentText(event.target.value);
+    const commentlValue = event.target.value;
+
+    if (commentText !== commentlValue) {
+      setCommentError(false);
+    }
+
+    setCommentText(commentlValue);
+  };
+
+  const clearErrors = () => {
+    setNameError(false);
+    setEmaiError(false);
+    setCommentError(false);
   };
 
   const addPost = async (event: React.FormEvent<HTMLButtonElement>) => {
@@ -51,28 +70,28 @@ export const NewCommentForm: React.FC<Props> = ({
       name.trim() === '' && email.trim() === '' && commentText.trim() === '';
 
     if (emptyFields) {
-      setStatus(Status.Error);
+      setNameError(true);
+      setEmaiError(true);
+      setCommentError(true);
+      setStatus(Status.IDLE);
 
       return;
     }
 
     if (name.trim() === '') {
-      setFieldError(FieldsErrorStatus.name);
-      setStatus(Status.IDLE);
+      setNameError(true);
 
       return;
     }
 
     if (email.trim() === '') {
-      setFieldError(FieldsErrorStatus.email);
-      setStatus(Status.IDLE);
+      setEmaiError(true);
 
       return;
     }
 
     if (commentText.trim() === '') {
-      setFieldError(FieldsErrorStatus.comment);
-      setStatus(Status.IDLE);
+      setCommentError(true);
 
       return;
     }
@@ -91,7 +110,7 @@ export const NewCommentForm: React.FC<Props> = ({
         return [...currentComments, comment];
       });
       setStatus(Status.Success);
-      setFieldError(FieldsErrorStatus.IDLE);
+      clearErrors();
       setCommentText('');
     } catch (error) {
       setStatus(Status.Error);
@@ -100,7 +119,7 @@ export const NewCommentForm: React.FC<Props> = ({
 
   const clear = () => {
     setStatus(Status.IDLE);
-    setFieldError(FieldsErrorStatus.IDLE);
+    clearErrors();
     setName('');
     setEmail('');
     setCommentText('');
@@ -120,7 +139,7 @@ export const NewCommentForm: React.FC<Props> = ({
             id="comment-author-name"
             placeholder="Name Surname"
             className={classNames('input', {
-              'is-danger': status === 'error' || fieldError === 'name',
+              'is-danger': nameError,
             })}
             value={name}
             onChange={handleNameInput}
@@ -130,7 +149,7 @@ export const NewCommentForm: React.FC<Props> = ({
             <i className="fas fa-user" />
           </span>
 
-          {(status === 'error' || fieldError === 'name') && (
+          {nameError && (
             <span
               className="icon is-small is-right has-text-danger"
               data-cy="ErrorIcon"
@@ -140,7 +159,7 @@ export const NewCommentForm: React.FC<Props> = ({
           )}
         </div>
 
-        {(status === 'error' || fieldError === 'name') && (
+        {nameError && (
           <p className="help is-danger" data-cy="ErrorMessage">
             Name is required
           </p>
@@ -159,7 +178,7 @@ export const NewCommentForm: React.FC<Props> = ({
             id="comment-author-email"
             placeholder="email@test.com"
             className={classNames('input', {
-              'is-danger': status === 'error' || fieldError === 'email',
+              'is-danger': emailError,
             })}
             value={email}
             onChange={handleEmailInput}
@@ -169,7 +188,7 @@ export const NewCommentForm: React.FC<Props> = ({
             <i className="fas fa-envelope" />
           </span>
 
-          {(status === 'error' || fieldError === 'email') && (
+          {emailError && (
             <span
               className="icon is-small is-right has-text-danger"
               data-cy="ErrorIcon"
@@ -179,7 +198,7 @@ export const NewCommentForm: React.FC<Props> = ({
           )}
         </div>
 
-        {(status === 'error' || fieldError === 'email') && (
+        {emailError && (
           <p className="help is-danger" data-cy="ErrorMessage">
             Email is required
           </p>
@@ -197,14 +216,14 @@ export const NewCommentForm: React.FC<Props> = ({
             name="body"
             placeholder="Type comment here"
             className={classNames('textarea', {
-              'is-danger': status === 'error' || fieldError === 'comment',
+              'is-danger': commentError,
             })}
             value={commentText}
             onChange={handleCommentInput}
           />
         </div>
 
-        {(status === 'error' || fieldError === 'comment') && (
+        {commentError && (
           <p className="help is-danger" data-cy="ErrorMessage">
             Enter some text
           </p>
@@ -216,7 +235,11 @@ export const NewCommentForm: React.FC<Props> = ({
           <button
             type="submit"
             className={classNames('button is-link', {
-              'is-loading': status === 'loading',
+              'is-loading':
+                status === 'loading' &&
+                !nameError &&
+                !emailError &&
+                !commentError,
             })}
             onClick={addPost}
           >

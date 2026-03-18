@@ -40,9 +40,8 @@ export const App = () => {
       const userData: User[] = await httpService.getUsers();
 
       setUsers(userData);
-    } catch (error) {
+    } catch {
       setUsersStatus(Status.Error);
-      throw error;
     }
   };
 

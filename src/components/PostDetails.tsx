@@ -30,6 +30,8 @@ export const PostDetails: React.FC<Props> = ({ selectedPost }) => {
   };
 
   const deleteComment = async (commentId: number) => {
+    const copiedCommets = [...comments];
+
     setComments((currentComments: Comment[]) => {
       return [...currentComments].filter(
         (comment: Comment) => comment.id !== commentId,
@@ -38,6 +40,7 @@ export const PostDetails: React.FC<Props> = ({ selectedPost }) => {
     try {
       await httpService.deleteComment(commentId);
     } catch {
+      setComments(copiedCommets);
       setStatus(Status.Error);
     }
   };
@@ -50,83 +53,75 @@ export const PostDetails: React.FC<Props> = ({ selectedPost }) => {
 
   return (
     <div className="content" data-cy="PostDetails">
-      <div className="content" data-cy="PostDetails">
-        <div className="block">
-          <h2 data-cy="PostTitle">{`#${selectedPost.id}: ${selectedPost.title}`}</h2>
+      <div className="block">
+        <h2 data-cy="PostTitle">{`#${selectedPost.id}: ${selectedPost.title}`}</h2>
 
-          <p data-cy="PostBody">{selectedPost.body}</p>
-        </div>
+        <p data-cy="PostBody">{selectedPost.body}</p>
+      </div>
 
-        <div className="block">
-          {status === 'loading' && <Loader />}
+      <div className="block">
+        {status === 'loading' && <Loader />}
 
-          {status === 'error' && (
-            <div className="notification is-danger" data-cy="CommentsError">
-              Something went wrong
-            </div>
-          )}
+        {status === 'error' && (
+          <div className="notification is-danger" data-cy="CommentsError">
+            Something went wrong
+          </div>
+        )}
 
-          {status === 'success' && comments.length === 0 && (
-            <p className="title is-4" data-cy="NoCommentsMessage">
-              No comments yet
-            </p>
-          )}
+        {status === 'success' && comments.length === 0 && (
+          <p className="title is-4" data-cy="NoCommentsMessage">
+            No comments yet
+          </p>
+        )}
 
-          {status === 'success' && comments.length > 0 && (
-            <>
-              <p className="title is-4">Comments:</p>
-              {comments.map((comment: Comment) => {
-                return (
-                  <article
-                    key={comment.id}
-                    className="message is-small"
-                    data-cy="Comment"
-                  >
-                    <div className="message-header">
-                      <a
-                        href={`mailto:${comment.email}`}
-                        data-cy="CommentAuthor"
-                      >
-                        {comment.name}
-                      </a>
-                      <button
-                        data-cy="CommentDelete"
-                        type="button"
-                        className="delete is-small"
-                        aria-label="delete"
-                        onClick={() => deleteComment(comment.id)}
-                      >
-                        delete button
-                      </button>
-                    </div>
+        {status === 'success' && comments.length > 0 && (
+          <>
+            <p className="title is-4">Comments:</p>
+            {comments.map((comment: Comment) => {
+              return (
+                <article
+                  key={comment.id}
+                  className="message is-small"
+                  data-cy="Comment"
+                >
+                  <div className="message-header">
+                    <a href={`mailto:${comment.email}`} data-cy="CommentAuthor">
+                      {comment.name}
+                    </a>
+                    <button
+                      data-cy="CommentDelete"
+                      type="button"
+                      className="delete is-small"
+                      aria-label="delete"
+                      onClick={() => deleteComment(comment.id)}
+                    >
+                      delete button
+                    </button>
+                  </div>
 
-                    <div className="message-body" data-cy="CommentBody">
-                      {comment.body}
-                    </div>
-                  </article>
-                );
-              })}
-            </>
-          )}
-          {status === 'success' && !activeWriteComment && (
-            <button
-              data-cy="WriteCommentButton"
-              type="button"
-              className="button is-link"
-              onClick={() => setActiveWriteComment(true)}
-            >
-              Write a comment
-            </button>
-          )}
-        </div>
-
-        {activeWriteComment && (
-          <NewCommentForm
-            selectedPost={selectedPost}
-            setComments={setComments}
-          />
+                  <div className="message-body" data-cy="CommentBody">
+                    {comment.body}
+                  </div>
+                </article>
+              );
+            })}
+          </>
+        )}
+        {status === 'success' && !activeWriteComment && (
+          <button
+            data-cy="WriteCommentButton"
+            type="button"
+            className="button is-link"
+            onClick={() => setActiveWriteComment(true)}
+          >
+            Write a comment
+          </button>
         )}
       </div>
+
+      {activeWriteComment && (
+        <NewCommentForm selectedPost={selectedPost} setComments={setComments} />
+      )}
     </div>
   );
 };

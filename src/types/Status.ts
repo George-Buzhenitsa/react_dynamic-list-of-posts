@@ -4,10 +4,3 @@ export enum Status {
   Success = 'success',
   Error = 'error',
 }
-
-export enum FieldsErrorStatus {
-  IDLE = 'idle',
-  name = 'name',
-  email = 'email',
-  comment = 'comment',
-}
