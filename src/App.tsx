@@ -89,9 +89,10 @@ export const App = () => {
                   <p data-cy="NoSelectedUser">No user selected</p>
                 )}
 
-                {usersPostStatus === 'loading' && <Loader />}
+                {usersPostStatus === Status.Loading && <Loader />}
 
-                {(usersPostStatus === 'error' || usersStatus === 'error') && (
+                {(usersPostStatus === Status.Error ||
+                  usersStatus === Status.Error) && (
                   <div
                     className="notification is-danger"
                     data-cy="PostsLoadingError"
@@ -100,18 +101,24 @@ export const App = () => {
                   </div>
                 )}
 
-                {usersPostStatus === 'success' && usersPosts.length === 0 && (
-                  <div className="notification is-warning" data-cy="NoPostsYet">
-                    No posts yet
-                  </div>
-                )}
-                {usersPostStatus === 'success' && usersPosts.length > 0 && (
-                  <PostsList
-                    usersPosts={usersPosts}
-                    selectedPost={selectedPost}
-                    setSelectedPost={setSelectedPost}
-                  />
-                )}
+                {usersPostStatus === Status.Success &&
+                  usersPosts.length === 0 && (
+                    <div
+                      className="notification is-warning"
+                      data-cy="NoPostsYet"
+                    >
+                      No posts yet
+                    </div>
+                  )}
+
+                {usersPostStatus === Status.Success &&
+                  usersPosts.length > 0 && (
+                    <PostsList
+                      usersPosts={usersPosts}
+                      selectedPost={selectedPost}
+                      setSelectedPost={setSelectedPost}
+                    />
+                  )}
               </div>
             </div>
           </div>
@@ -123,7 +130,9 @@ export const App = () => {
               'is-parent',
               'is-8-desktop',
               'Sidebar',
-              { 'Sidebar--open': selectedPost },
+              {
+                'Sidebar--open': selectedPost,
+              },
             )}
           >
             {selectedPost && (

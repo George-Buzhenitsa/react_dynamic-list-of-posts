@@ -30,7 +30,7 @@ export const PostDetails: React.FC<Props> = ({ selectedPost }) => {
   };
 
   const deleteComment = async (commentId: number) => {
-    const copiedCommets = [...comments];
+    const copiedComments = [...comments];
 
     setComments((currentComments: Comment[]) => {
       return [...currentComments].filter(
@@ -40,8 +40,7 @@ export const PostDetails: React.FC<Props> = ({ selectedPost }) => {
     try {
       await httpService.deleteComment(commentId);
     } catch {
-      setComments(copiedCommets);
-      setStatus(Status.Error);
+      setComments(copiedComments);
     }
   };
 
@@ -60,21 +59,22 @@ export const PostDetails: React.FC<Props> = ({ selectedPost }) => {
       </div>
 
       <div className="block">
-        {status === 'loading' && <Loader />}
+        {status === Status.Loading && <Loader />}
 
-        {status === 'error' && (
+        {status === Status.Error && (
           <div className="notification is-danger" data-cy="CommentsError">
             Something went wrong
+            <button onClick={() => loadComments(selectedPost.id)}>Retry</button>
           </div>
         )}
 
-        {status === 'success' && comments.length === 0 && (
+        {status === Status.Success && comments.length === 0 && (
           <p className="title is-4" data-cy="NoCommentsMessage">
             No comments yet
           </p>
         )}
 
-        {status === 'success' && comments.length > 0 && (
+        {status === Status.Success && comments.length > 0 && (
           <>
             <p className="title is-4">Comments:</p>
             {comments.map((comment: Comment) => {
@@ -107,7 +107,7 @@ export const PostDetails: React.FC<Props> = ({ selectedPost }) => {
             })}
           </>
         )}
-        {status === 'success' && !activeWriteComment && (
+        {status === Status.Success && !activeWriteComment && (
           <button
             data-cy="WriteCommentButton"
             type="button"
@@ -119,8 +119,13 @@ export const PostDetails: React.FC<Props> = ({ selectedPost }) => {
         )}
       </div>
 
-      {activeWriteComment && (
-        <NewCommentForm selectedPost={selectedPost} setComments={setComments} />
+      {activeWriteComment && status !== Status.Error && (
+        <NewCommentForm
+          selectedPost={selectedPost}
+          status={status}
+          setStatus={setStatus}
+          setComments={setComments}
+        />
       )}
     </div>
   );

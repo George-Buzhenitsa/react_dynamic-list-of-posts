@@ -7,21 +7,23 @@ import { Post } from '../types/Post';
 
 interface Props {
   selectedPost: Post;
+  status: Status;
+  setStatus: React.Dispatch<React.SetStateAction<Status>>;
   setComments: React.Dispatch<React.SetStateAction<Comment[]>>;
 }
 
 export const NewCommentForm: React.FC<Props> = ({
   selectedPost,
+  status,
+  setStatus,
   setComments,
 }) => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [commentText, setCommentText] = useState('');
 
-  const [status, setStatus] = useState<Status>(Status.IDLE);
-
   const [nameError, setNameError] = useState(false);
-  const [emailError, setEmaiError] = useState(false);
+  const [emailError, setEmailError] = useState(false);
   const [commentError, setCommentError] = useState(false);
 
   const handleNameInput = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -38,7 +40,7 @@ export const NewCommentForm: React.FC<Props> = ({
     const emailValue = event.target.value;
 
     if (email !== emailValue) {
-      setEmaiError(false);
+      setEmailError(false);
     }
 
     setEmail(emailValue);
@@ -47,18 +49,18 @@ export const NewCommentForm: React.FC<Props> = ({
   const handleCommentInput = (
     event: React.ChangeEvent<HTMLTextAreaElement>,
   ) => {
-    const commentlValue = event.target.value;
+    const commentValue = event.target.value;
 
-    if (commentText !== commentlValue) {
+    if (commentText !== commentValue) {
       setCommentError(false);
     }
 
-    setCommentText(commentlValue);
+    setCommentText(commentValue);
   };
 
   const clearErrors = () => {
     setNameError(false);
-    setEmaiError(false);
+    setEmailError(false);
     setCommentError(false);
   };
 
@@ -71,7 +73,7 @@ export const NewCommentForm: React.FC<Props> = ({
 
     if (emptyFields) {
       setNameError(true);
-      setEmaiError(true);
+      setEmailError(true);
       setCommentError(true);
       setStatus(Status.IDLE);
 
@@ -85,7 +87,7 @@ export const NewCommentForm: React.FC<Props> = ({
     }
 
     if (email.trim() === '') {
-      setEmaiError(true);
+      setEmailError(true);
 
       return;
     }

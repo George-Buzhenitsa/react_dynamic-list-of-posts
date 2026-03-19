@@ -4,19 +4,15 @@ import { User } from '../types/User';
 import { client } from '../utils/fetchClient';
 
 export const getUsers = () => {
-  return client.get<User[]>('/users').then((userData: User[]) => userData);
+  return client.get<User[]>('/users');
 };
 
 export const getUsersPosts = (userId: number) => {
-  return client
-    .get<Post[]>(`/posts?userId=${userId}`)
-    .then((posts: Post[]) => posts);
+  return client.get<Post[]>(`/posts?userId=${userId}`);
 };
 
 export const getPostsComments = (postId: number) => {
-  return client
-    .get<Comment[]>(`/comments?postId=${postId}`)
-    .then((comments: Comment[]) => comments);
+  return client.get<Comment[]>(`/comments?postId=${postId}`);
 };
 
 export const addComment = ({ postId, name, email, body }: CommentData) => {
