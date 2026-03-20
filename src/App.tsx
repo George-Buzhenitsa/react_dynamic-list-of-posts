@@ -101,24 +101,26 @@ export const App = () => {
                   </div>
                 )}
 
-                {usersPostStatus === Status.Success &&
-                  usersPosts.length === 0 && (
-                    <div
-                      className="notification is-warning"
-                      data-cy="NoPostsYet"
-                    >
-                      No posts yet
-                    </div>
-                  )}
+                {usersPostStatus === Status.Success && (
+                  <>
+                    {usersPosts.length === 0 && (
+                      <div
+                        className="notification is-warning"
+                        data-cy="NoPostsYet"
+                      >
+                        No posts yet
+                      </div>
+                    )}
 
-                {usersPostStatus === Status.Success &&
-                  usersPosts.length > 0 && (
-                    <PostsList
-                      usersPosts={usersPosts}
-                      selectedPost={selectedPost}
-                      setSelectedPost={setSelectedPost}
-                    />
-                  )}
+                    {usersPosts.length > 0 && (
+                      <PostsList
+                        usersPosts={usersPosts}
+                        selectedPost={selectedPost}
+                        setSelectedPost={setSelectedPost}
+                      />
+                    )}
+                  </>
+                )}
               </div>
             </div>
           </div>
